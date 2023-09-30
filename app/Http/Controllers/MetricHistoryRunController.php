@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MetricHistoryRun;
+use App\Models\Strategy;
 use Illuminate\Http\Request;
 
 class MetricHistoryRunController extends Controller
@@ -12,7 +13,8 @@ class MetricHistoryRunController extends Controller
      */
     public function index()
     {
-        //
+        $runs = MetricHistoryRun::all();
+        return view('runs', compact('runs'));
     }
 
     /**
@@ -20,7 +22,8 @@ class MetricHistoryRunController extends Controller
      */
     public function create()
     {
-        //
+        $strategies = Strategy::all();
+        return view('runCreate', compact('strategies'));
     }
 
     /**
@@ -28,7 +31,14 @@ class MetricHistoryRunController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if($request->ajax()) {
+            $run = MetricHistoryRun::create([
+                'strategy_id' => $request->strategy_id,
+                'url' => $request->url,
+                'status' => 'pending',
+            ]);
+            return response()->json($run);
+        }
     }
 
     /**

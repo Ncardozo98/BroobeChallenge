@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MetricHistoryRunController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::get('/runs', [MetricHistoryRunController::class, 'index'])->name('run.index');
+Route::get('/runCreate', [MetricHistoryRunController::class, 'create'])->name('run.create');
+Route::post('/runStore', [MetricHistoryRunController::class, 'store'])->name('run.store');
