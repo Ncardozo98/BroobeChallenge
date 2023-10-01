@@ -13,7 +13,7 @@ class MetricHistoryRunController extends Controller
      */
     public function index()
     {
-        $runs = MetricHistoryRun::all();
+        $runs = MetricHistoryRun::with('getStrategy')->get();
         return view('runs', compact('runs'));
     }
 
@@ -32,12 +32,26 @@ class MetricHistoryRunController extends Controller
     public function store(Request $request)
     {
         if($request->ajax()) {
-            $run = MetricHistoryRun::create([
-                'strategy_id' => $request->strategy_id,
-                'url' => $request->url,
-                'status' => 'pending',
-            ]);
-            return response()->json($run);
+            try{
+                $run = MetricHistoryRun::create([
+                    'url' => $request->url,
+                    'strategy_id' => $request->strategy_id,
+                    'accesibility_metric' => $request->accesibility ?? 0,
+                    'pwa_metric' => $request->pwa ?? 0,
+                    'performance_metric' => $request->performance ?? 0,
+                    'seo_metric' => $request->seo ?? 0,
+                    'best_practices_metric' => $request->best_practices ?? 0
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'run' => $run
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+            }
         }
     }
 

@@ -81,14 +81,15 @@
 
         let vars = {
             url: $('#url').val(),
-            pwa: $('#pwa').text(),
-            seo: $('#seo').text(),
-            performance: $('#performance').text(),
-            best_practices: $('#best_practices').text(),
-            accesibility: $('#accesibility').text(),
-            strategy: $('#strategy option:selected').text(),
-            _token: $('meta[name="csrf-token"]').attr('content')
+            strategy_id: $('#strategy option:selected').val(),
+            _token: "{{ csrf_token() }}"
         };
+
+        if($('#pwa').length){vars.pwa = $('#pwa').text();}
+        if($('#seo').length){vars.seo = $('#seo').text();}
+        if($('#performance').length){vars.performance = $('#performance').text();}
+        if($('#best-practices').length){vars.best_practices = $('#best-practices').text();}
+        if($('#accessibility').length){vars.accesibility = $('#accessibility').text();}
 
         $.ajax({
             url: "{{ route('run.store') }}",
@@ -96,8 +97,26 @@
             dataType: 'json',
             data: vars,
             success: function(data){
-                console.log(data);
-                $('#metric_button').removeAttr('disabled');
+                if(data['success']){
+                    $('#metric_button').attr('disabled', true);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Metric run (ID: '+data['run']['id']+') saved successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ route('run.index') }}";
+                        }
+                    })
+                }else{
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong!',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
             }
         });
     }
@@ -125,7 +144,7 @@
             },
             success: function(data){
                 Swal.close();
-                console.log(data);
+
                 let metrics = data.lighthouseResult.categories;
                 let html = "<form action='{{ route('run.store') }}' method='POST'>";
                 html += '<div class="row">';
