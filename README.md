@@ -39,9 +39,13 @@
 > Al intentar editar el archivo de configuración  ".env" nos damos cuenta que no está- sin embargo, hay un archivo. ".env.example"  
 > Entonces vamos a generar nuetro archivo ".env" renombrando o compiando este archivo.
 
-> Ahora si, el último paso es genear la key del proyecto.  
+> Ahora si, el siguiente paso es genear la key del proyecto.  
 > Esto se logra con el comando
 
     php artisan key:generate
+
+> Ahora solo queda correr las migraciones y los seeders
+
+    php artisan migrate --seed
 
 > Ahora ya tenemos nuestro proyecto listo!
